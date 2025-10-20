@@ -7,6 +7,6 @@ const app = new App();
   try {
     await app.run();
   } catch (err) {
-    MissionUtils.Console.print(err?.message ?? '[ERROR] 알 수 없는 오류가 발생했습니다.');
+    MissionUtils.Console.print(err?.message);
   }
 })();
