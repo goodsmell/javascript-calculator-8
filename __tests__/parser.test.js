@@ -1,4 +1,5 @@
-import { parseCustomDelimiter, parseNumber } from '../src/parser.js';
+import { extractCustomDelimiter, splitNumbersByDelimiter } from '../src/parser.js';
+import { BASE_DELIMITERS } from '../src/constants/delimiters.js';
 
 describe('parser - 커스텀 구분자 파싱', () => {
   test.each([
@@ -12,7 +13,7 @@ describe('parser - 커스텀 구분자 파싱', () => {
     ['//;1;2;3', null, '//;1;2;3'],
     ['//.*+\n1.*+2.*+3', '.*+', '1.*+2.*+3'],
   ])('"%s" → customDelimiter:%j, body:%j', (input, expectedDelim, expectedBody) => {
-    const { customDelimiter, body } = parseCustomDelimiter(input);
+    const { customDelimiter, body } = extractCustomDelimiter(input);
     expect(customDelimiter).toBe(expectedDelim);
     expect(body).toBe(expectedBody);
   });
@@ -20,12 +21,12 @@ describe('parser - 커스텀 구분자 파싱', () => {
 
 describe('parser - 숫자 파싱', () => {
   test.each([
-    ['1;2;3', [',', ':', ';'], [1, 2, 3]],
-    ['1,2:3', [',', ':'], [1, 2, 3]],
-    ['3', [',', ':'], [3]],
-    ['', [',', ':'], [0]],
+    ['1;2;3', [...BASE_DELIMITERS, ';'], [1, 2, 3]],
+    ['1,2:3', [...BASE_DELIMITERS], [1, 2, 3]],
+    ['3', [...BASE_DELIMITERS], [3]],
+    ['', [...BASE_DELIMITERS], [0]],
   ])('"%s"를 구분자 %j로 파싱하면 %j가 된다', (body, delims, expected) => {
-    const numbers = parseNumber(body, delims);
+    const numbers = splitNumbersByDelimiter(body, delims);
     expect(numbers).toEqual(expected);
   });
 });

@@ -1,8 +1,16 @@
 import { makeDelimiterRegex } from './utils/regex.js';
-import { REGEX } from './constants/patterns.js';
 
-export function parseCustomDelimiter(input) {
-  const match = input.match(REGEX.CUSTOM_DELIMITER);
+const CUSTOM_DELIMITER = /^\/\/(.+)(?:\n|\\n)/;
+
+
+/**
+ * 입력 문자열에서 커스텀 구분자를 추출한다.
+ * @param {string} input - 입력 문자열 (예: "//;\n1;2;3")
+ * @returns {{ customDelimiter: string|null, body: string }} 
+ * 추출된 커스텀 구분자와 본문(body)
+ */
+export function extractCustomDelimiter(input) {
+  const match = input.match(CUSTOM_DELIMITER);
 
   if (!match) return { customDelimiter: null, body: input };
 
@@ -12,7 +20,13 @@ export function parseCustomDelimiter(input) {
   return { customDelimiter, body };
 }
 
-export function parseNumber(body, delims) {
+/**
+ * 구분자를 기준으로 문자열을 분리해 숫자 배열로 변환한다.
+ * @param {string} body - 숫자 문자열 (예: "1,2:3")
+ * @param {string[]} delims - 구분자 목록 (예: [",", ":", ";"])
+ * @returns {number[]} 숫자 배열 (예: [1,2,3])
+ */
+export function splitNumbersByDelimiter(body, delims) {
   const reg = makeDelimiterRegex(delims);
   const tokens = body.split(reg);
 
